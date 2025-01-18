@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.BattleTanks." parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+    <style name="Theme.BattleTanks." parent="Base.Theme.BattleTanks."/>
+</resources>
