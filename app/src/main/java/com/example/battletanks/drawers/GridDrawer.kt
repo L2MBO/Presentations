@@ -1,31 +1,30 @@
-package com.example.battletanks
-import android.content.Context
+package com.example.battletanks.drawers
+
 import android.graphics.Color
 import android.view.View
 import android.widget.FrameLayout
+import com.example.battletanks.CELL_SIZE
 
-class GridDrawer (private val context: Context)
-{
+
+class GridDrawer (private val container: FrameLayout) {
     private val allLines = mutableListOf<View>()
 
     fun removeGrid() {
-        val container = binding.container
         allLines.forEach {
             container.removeView(it)
         }
     }
 
 fun drawGrid(){
-    val container = binding.container
-    drawHorizontalLines(container)
-    drawVerticalLines(container)
+    drawHorizontalLines()
+    drawVerticalLines()
 }
-    private fun drawHorizontalLines(container: FrameLayout?){
+    private fun drawHorizontalLines(){
         var topMargin = 0
         while (topMargin <= container!!.height) {
-            val horizotalLine = View(context)
+            val horizotalLine = View(container.context)
             val layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 1)
-            topMargin += 50
+            topMargin += CELL_SIZE
             layoutParams.topMargin = topMargin
             horizotalLine.layoutParams = layoutParams
             horizotalLine.setBackgroundColor(Color.WHITE)
@@ -33,12 +32,12 @@ fun drawGrid(){
             container.addView((horizotalLine))
         }
     }
-    private fun drawVerticalLines(container: FrameLayout?){
+    private fun drawVerticalLines(){
         var leftMargin = 0
         while (leftMargin <= container!!.width) {
-            val verticalLine = View(context)
+            val verticalLine = View(container.context)
             val layoutParams = FrameLayout.LayoutParams (1, FrameLayout.LayoutParams.MATCH_PARENT)
-            leftMargin += 50
+            leftMargin += CELL_SIZE
             layoutParams.leftMargin = leftMargin
             verticalLine.layoutParams = layoutParams
             verticalLine.setBackgroundColor(Color.WHITE)
