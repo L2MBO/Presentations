@@ -6,6 +6,15 @@ import android.widget.FrameLayout
 
 class GridDrawer (private val context: Context)
 {
+    private val allLines = mutableListOf<View>()
+
+    fun removeGrid() {
+        val container = binding.container
+        allLines.forEach {
+            container.removeView(it)
+        }
+    }
+
 fun drawGrid(){
     val container = binding.container
     drawHorizontalLines(container)
@@ -20,6 +29,7 @@ fun drawGrid(){
             layoutParams.topMargin = topMargin
             horizotalLine.layoutParams = layoutParams
             horizotalLine.setBackgroundColor(Color.WHITE)
+            allLines.add(horizotalLine)
             container.addView((horizotalLine))
         }
     }
@@ -32,6 +42,7 @@ fun drawGrid(){
             layoutParams.leftMargin = leftMargin
             verticalLine.layoutParams = layoutParams
             verticalLine.setBackgroundColor(Color.WHITE)
+            allLines.add(verticalLine)
             container.addView(verticalLine)
         }
     }
