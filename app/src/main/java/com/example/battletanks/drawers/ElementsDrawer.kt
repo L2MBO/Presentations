@@ -21,7 +21,34 @@ class ElementsDrawer(val container: FrameLayout) {
         val topMargin = y.toInt() - (y.toInt() % CELL_SIZE)
         val leftMargin = x.toInt() - (x.toInt() % CELL_SIZE)
         val coordinate = Coordinate(topMargin, leftMargin)
+        if (currentMaterial == Material.EMPTY) {
+            eraseView(coordinate)
+        } else {
+            drawOrReplaceView(coordinate)
+        }
+    }
+    private fun drawOrReplaceView(coordinate: Coordinate) {
+        val viewOnCoordinate = getElementByCoordinates(coordinate)
+        if (viewOnCoordinate == null) {
+            drawView(coordinate)
+            return
+        }
+        if (viewOnCoordinate.material != currentMaterial) {
+            replaceView(coordinate)
+        }
+    }
+    private  fun replaceView(coordinate: Coordinate) {
+        eraseView(coordinate)
         drawView(coordinate)
+    }
+
+    private fun eraseView(coordinate: Coordinate) {
+        val elementOnCoordinate = getElementByCoordinates(coordinate)
+        if (elementOnCoordinate != null) {
+            val erasingView = container.findViewById<View>(elementOnCoordinate.viewId)
+            container.removeView(erasingView)
+            elementsOnContainer.remove(elementOnCoordinate)
+        }
     }
 
     fun drawView(coordinate: Coordinate) {
@@ -70,18 +97,18 @@ class ElementsDrawer(val container: FrameLayout) {
                 myTank
             ) && checkTankCanMoveThroughMaterial(nextCoordinate))
         {
-            binding.container.removeView(binding.myTank)
-            binding.container.addView(binding.myTank)
+            binding.container.removeView(myTank)
+            binding.container.addView(myTank, 0)
         } else {
             (myTank.layoutParams as FrameLayout.LayoutParams).topMargin = currentCoordinate.top
             (myTank.layoutParams as FrameLayout.LayoutParams).leftMargin = currentCoordinate.left
         }
     }
-    private fun getElementyCoordinates(coordinate: Coordinate) =
+    private fun getElementByCoordinates(coordinate: Coordinate) =
         elementsOnContainer.firstOrNull { it.coordinate == coordinate }
     private fun  checkTankCanMoveThroughMaterial(coordinate: Coordinate): Boolean {
         getTankCoordinates(coordinate).forEach {
-            val element = getElementyCoordinates(it)
+            val element = getElementByCoordinates(it)
             if (element != null && !element.material.tankConGoThrough) {
                 return false
             }
