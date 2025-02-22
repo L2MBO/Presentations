@@ -27,6 +27,7 @@ class ElementsDrawer(val container: FrameLayout) {
             drawOrReplaceView(coordinate)
         }
     }
+
     private fun drawOrReplaceView(coordinate: Coordinate) {
         val viewOnCoordinate = getElementByCoordinates(coordinate)
         if (viewOnCoordinate == null) {
@@ -37,7 +38,8 @@ class ElementsDrawer(val container: FrameLayout) {
             replaceView(coordinate)
         }
     }
-    private  fun replaceView(coordinate: Coordinate) {
+
+    private fun replaceView(coordinate: Coordinate) {
         eraseView(coordinate)
         drawView(coordinate)
     }
@@ -73,4 +75,5 @@ class ElementsDrawer(val container: FrameLayout) {
 
     private fun getElementByCoordinates(coordinate: Coordinate) =
         elementsOnContainer.firstOrNull { it.coordinate == coordinate }
+
 }

@@ -7,23 +7,21 @@ import android.view.KeyEvent.KEYCODE_DPAD_DOWN
 import android.view.KeyEvent.KEYCODE_DPAD_LEFT
 import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
 import android.view.KeyEvent.KEYCODE_DPAD_UP
+import android.view.KeyEvent.KEYCODE_SPACE
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.FrameLayout
-import androidx.core.view.marginLeft
-import androidx.core.view.marginTop
 import com.example.battletanks.enums.Direction.UP
 import com.example.battletanks.enums.Direction.DOWN
-import com.example.battletanks.enums.Direction.RIGHT
 import com.example.battletanks.enums.Direction.LEFT
+import com.example.battletanks.enums.Direction.RIGHT
 import com.example.battletanks.databinding.ActivityMainBinding
+import com.example.battletanks.drawers.BulletDrawer
 import com.example.battletanks.drawers.ElementsDrawer
 import com.example.battletanks.drawers.GridDrawer
 import com.example.battletanks.drawers.TankDrawer
 import com.example.battletanks.enums.Material
-import com.example.battletanks.models.Coordinate
 
 const val CELL_SIZE = 50
 
@@ -42,10 +40,10 @@ class MainActivity : AppCompatActivity() {
     private val tankDrawer by lazy {
         TankDrawer(binding.container)
     }
+
     private val bulletDrawer by lazy {
         BulletDrawer(binding.container)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,25 +52,23 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Menu"
 
-        binding.editorClear.setOnClickListener {elementsDrawer.currentMaterial = Material.EMPTY}
-        binding.editorBrick.setOnClickListener{elementsDrawer.currentMaterial = Material.BRICK}
-        binding.editorConcrete.setOnClickListener{
+        binding.editorClear.setOnClickListener { elementsDrawer.currentMaterial = Material.EMPTY }
+        binding.editorBrick.setOnClickListener { elementsDrawer.currentMaterial = Material.BRICK }
+        binding.editorConcrete.setOnClickListener {
             elementsDrawer.currentMaterial = Material.CONCRETE
         }
-        binding.editorGrass.setOnClickListener{elementsDrawer.currentMaterial = Material.GRASS}
-        binding.container.setOnTouchListener{_, event ->
+        binding.editorGrass.setOnClickListener { elementsDrawer.currentMaterial = Material.GRASS }
+        binding.container.setOnTouchListener { _, event ->
             elementsDrawer.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
         }
     }
 
-
-    private fun switchEditMode (){
+    private fun switchEditMode() {
         if (editMode) {
             gridDrawer.removeGrid()
             binding.materialsContainer.visibility = INVISIBLE
-        }
-        else {
+        } else {
             gridDrawer.drawGrid()
             binding.materialsContainer.visibility = VISIBLE
         }
@@ -85,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId){
+        return when (item.itemId) {
             R.id.menu_settings -> {
                 switchEditMode()
                 return true
@@ -101,31 +97,31 @@ class MainActivity : AppCompatActivity() {
                 UP,
                 elementsDrawer.elementsOnContainer
             )
+
             KEYCODE_DPAD_DOWN -> tankDrawer.move(
                 binding.myTank,
                 DOWN,
                 elementsDrawer.elementsOnContainer
             )
+
             KEYCODE_DPAD_LEFT -> tankDrawer.move(
                 binding.myTank,
                 LEFT,
                 elementsDrawer.elementsOnContainer
             )
+
             KEYCODE_DPAD_RIGHT -> tankDrawer.move(
                 binding.myTank,
                 RIGHT,
                 elementsDrawer.elementsOnContainer
             )
+
             KEYCODE_SPACE -> bulletDrawer.drawBullet(
                 binding.myTank,
                 RIGHT,
                 tankDrawer.currenrDirection
             )
         }
-        return super.onKeyDown(keyCode, event)
+        return super.onKeyShortcut(keyCode, event)
     }
-}
-
-open class AppCompatAc0tivity {
-
 }

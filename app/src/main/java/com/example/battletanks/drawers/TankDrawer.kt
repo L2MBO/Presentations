@@ -1,4 +1,5 @@
 package com.example.battletanks.drawers
+
 import android.view.View
 import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
@@ -6,8 +7,10 @@ import com.example.battletanks.binding
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
+
 class TankDrawer(val container: FrameLayout) {
     var currenrDirection = Direction.UP
+
     fun move(myTank: View, direction: Direction, elementsOnContainer: List<Element>) {
         val layoutParams = myTank.layoutParams as FrameLayout.LayoutParams
         val currentCoordinate = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
@@ -18,19 +21,23 @@ class TankDrawer(val container: FrameLayout) {
                 myTank.rotation = 0f
                 (myTank.layoutParams as FrameLayout.LayoutParams).topMargin += -CELL_SIZE
             }
+
             Direction.DOWN -> {
                 myTank.rotation = 180f
                 (myTank.layoutParams as FrameLayout.LayoutParams).topMargin += CELL_SIZE
             }
+
             Direction.LEFT -> {
                 myTank.rotation = 270f
                 (myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
             }
+
             Direction.RIGHT -> {
                 myTank.rotation = 90f
                 (myTank.layoutParams as FrameLayout.LayoutParams).leftMargin += CELL_SIZE
             }
         }
+
         val nextCoordinate = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
         if (checkTankCanMoveThroughBorder(
                 nextCoordinate,
@@ -44,6 +51,7 @@ class TankDrawer(val container: FrameLayout) {
             (myTank.layoutParams as FrameLayout.LayoutParams).leftMargin = currentCoordinate.left
         }
     }
+
     private fun  checkTankCanMoveThroughMaterial(
         coordinate: Coordinate,
         elementsOnContainer: List<Element>
@@ -56,6 +64,7 @@ class TankDrawer(val container: FrameLayout) {
         }
         return true
     }
+
     private fun checkTankCanMoveThroughBorder(coordinate: Coordinate, myTank: View): Boolean {
         if (coordinate.top >= 0 &&
             coordinate.top + myTank.height <= binding.container.height &&
@@ -66,6 +75,7 @@ class TankDrawer(val container: FrameLayout) {
         }
         return false
     }
+
     private fun getTankCoordinates(topLeftCoordinate: Coordinate): List<Coordinate> {
         val coordinateList = mutableListOf<Coordinate>()
         coordinateList.add(topLeftCoordinate)
@@ -79,6 +89,7 @@ class TankDrawer(val container: FrameLayout) {
         )
         return coordinateList
     }
+
     private fun getElementByCoordinates(
         coordinate: Coordinate, elementsOnContainer: List<Element>
     ) =
