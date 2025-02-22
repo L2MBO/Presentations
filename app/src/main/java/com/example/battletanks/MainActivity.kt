@@ -116,9 +116,8 @@ class MainActivity : AppCompatActivity() {
                 elementsDrawer.elementsOnContainer
             )
 
-            KEYCODE_SPACE -> bulletDrawer.drawBullet(
+            KEYCODE_SPACE -> bulletDrawer.makeBulletMove(
                 binding.myTank,
-                RIGHT,
                 tankDrawer.currenrDirection
             )
         }

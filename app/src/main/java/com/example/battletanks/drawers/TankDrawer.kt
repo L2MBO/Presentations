@@ -7,6 +7,7 @@ import com.example.battletanks.binding
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
+import com.example.battletanks.utils.checkViewCanMoveThrounghBorder
 
 class TankDrawer(val container: FrameLayout) {
     var currenrDirection = Direction.UP
@@ -39,10 +40,9 @@ class TankDrawer(val container: FrameLayout) {
         }
 
         val nextCoordinate = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
-        if (checkTankCanMoveThroughBorder(
-                nextCoordinate,
-                myTank
-            ) && checkTankCanMoveThroughMaterial(nextCoordinate, elementsOnContainer))
+        if (myTank.checkViewCanMoveThrounghBorder(
+                nextCoordinate
+            ) && checkTankCanMoveThrounghMaterial(nextCoordinate, elementsOnContainer))
         {
             binding.container.removeView(myTank)
             binding.container.addView(myTank, 0)
@@ -52,7 +52,7 @@ class TankDrawer(val container: FrameLayout) {
         }
     }
 
-    private fun  checkTankCanMoveThroughMaterial(
+    private fun  checkTankCanMoveThrounghMaterial(
         coordinate: Coordinate,
         elementsOnContainer: List<Element>
     ): Boolean {
@@ -65,16 +65,16 @@ class TankDrawer(val container: FrameLayout) {
         return true
     }
 
-    private fun checkTankCanMoveThroughBorder(coordinate: Coordinate, myTank: View): Boolean {
-        if (coordinate.top >= 0 &&
-            coordinate.top + myTank.height <= binding.container.height &&
-            coordinate.left >= 0 &&
-            coordinate.left + myTank.width <= binding.container.width
-        ) {
-            return true
-        }
-        return false
-    }
+    //    private fun checkTankCanMoveThroughBorder(coordinate: Coordinate, myTank: View): Boolean {
+//        if (coordinate.top >= 0 &&
+//            coordinate.top + myTank.height <= binding.container.height &&
+//            coordinate.left >= 0 &&
+//            coordinate.left + myTank.width <= binding.container.width
+//        ) {
+//            return true
+//        }
+//        return false
+//    }
 
     private fun getTankCoordinates(topLeftCoordinate: Coordinate): List<Coordinate> {
         val coordinateList = mutableListOf<Coordinate>()
