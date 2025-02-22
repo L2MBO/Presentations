@@ -118,7 +118,8 @@ class MainActivity : AppCompatActivity() {
 
             KEYCODE_SPACE -> bulletDrawer.makeBulletMove(
                 binding.myTank,
-                tankDrawer.currenrDirection
+                tankDrawer.currenrDirection,
+                elementsDrawer.elementsOnContainer
             )
         }
         return super.onKeyShortcut(keyCode, event)

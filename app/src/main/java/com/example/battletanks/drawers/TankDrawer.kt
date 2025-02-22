@@ -8,6 +8,7 @@ import com.example.battletanks.enums.Direction
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
 import com.example.battletanks.utils.checkViewCanMoveThrounghBorder
+import com.example.battletanks.utils.getElementByCoordinates
 
 class TankDrawer(val container: FrameLayout) {
     var currenrDirection = Direction.UP
@@ -65,17 +66,6 @@ class TankDrawer(val container: FrameLayout) {
         return true
     }
 
-    //    private fun checkTankCanMoveThroughBorder(coordinate: Coordinate, myTank: View): Boolean {
-//        if (coordinate.top >= 0 &&
-//            coordinate.top + myTank.height <= binding.container.height &&
-//            coordinate.left >= 0 &&
-//            coordinate.left + myTank.width <= binding.container.width
-//        ) {
-//            return true
-//        }
-//        return false
-//    }
-
     private fun getTankCoordinates(topLeftCoordinate: Coordinate): List<Coordinate> {
         val coordinateList = mutableListOf<Coordinate>()
         coordinateList.add(topLeftCoordinate)
@@ -89,9 +79,4 @@ class TankDrawer(val container: FrameLayout) {
         )
         return coordinateList
     }
-
-    private fun getElementByCoordinates(
-        coordinate: Coordinate, elementsOnContainer: List<Element>
-    ) =
-        elementsOnContainer.firstOrNull { it.coordinate == coordinate }
 }
