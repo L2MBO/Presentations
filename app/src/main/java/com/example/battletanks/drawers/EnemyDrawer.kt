@@ -3,26 +3,33 @@ package com.example.battletanks.drawers
 import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.enums.CELLS_TANK_SIZE
-import com.example.battletanks.enums.Material
+import com.example.battletanks.enums.Direction.DOWN
+import com.example.battletanks.enums.Material.ENEMY_TANK
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
+import com.example.battletanks.models.Tank
 import com.example.battletanks.utils.drawElement
 
 private const val MAX_ENEMY_AMOUNT = 20
 
-class EnemyDrawer(private val container: FrameLayout) {
+class EnemyDrawer(
+    private val container: FrameLayout,
+    private val elements: MutableList<Element>
+) {
+
     private val respawnList: List<Coordinate>
     private var enemyAmount = 0
     private var currentCoordinate:Coordinate
+    private val tanks = mutableListOf<Tank>()
 
     init {
         respawnList = getRespawnList()
         currentCoordinate = respawnList[0]
     }
 
-    private fun getRespawnList(): List<Coordinate> {
+    private  fun getRespawnList(): List<Coordinate> {
         val respawnList = mutableListOf<Coordinate>()
-        respawnList.add(Coordinate(0, 0))
+        respawnList.add(Coordinate(0,0))
         respawnList.add(
             Coordinate(
                 0,
@@ -40,29 +47,55 @@ class EnemyDrawer(private val container: FrameLayout) {
         return respawnList
     }
 
-    private fun drawEnemy(elements: MutableList<Element>) {
+    private fun drawEnemy() {
         var index = respawnList.indexOf(currentCoordinate) + 1
         if (index == respawnList.size) {
             index = 0
         }
         currentCoordinate = respawnList[index]
-        val enemyTankElement = Element(
-            material = Material.ENEMY_TANK,
-            coordinate = currentCoordinate,
-            width = Material.ENEMY_TANK.width,
-            height = Material.ENEMY_TANK.height
+        val enemyTank = Tank (
+            Element(
+                material = ENEMY_TANK,
+                coordinate = currentCoordinate,
+                width = ENEMY_TANK.width,
+                height = ENEMY_TANK.height
+            ), DOWN
         )
-        enemyTankElement.drawElement(container)
-        elements.add(enemyTankElement)
+        enemyTank.element.drawElement(container)
+        elements.add(enemyTank.element)
+        tanks.add(enemyTank)
     }
 
-    fun startEnemyDrawing(elements: MutableList<Element>) {
-        Thread(Runnable {
-            while (enemyAmount < MAX_ENEMY_AMOUNT) {
-                drawEnemy(elements)
-                enemyAmount++
-                Thread.sleep(300)
+    fun moveEnemyTanks() {
+        Thread( {
+            while (true) {
+                removeIncosistentTanks()
+                tanks.forEach {
+                    it.move(it.direction, container, elements)
+                }
+                Thread.sleep(400)
             }
         }).start()
+    }
+
+    fun startEnemyCreation() {
+        Thread(Runnable{
+            while(enemyAmount < MAX_ENEMY_AMOUNT) {
+                drawEnemy()
+                enemyAmount++
+                Thread.sleep(3000)
+            }
+        }).start()
+    }
+
+    private fun removeIncosistentTanks(): List<Tank> {
+        val removingTanks = mutableListOf<Tank>()
+        val allTanksElements = elements.filter { it.material == ENEMY_TANK }
+        tanks.forEach {
+            if (!allTanksElements.contains(it.element)) {
+                removingTanks.add(it)
+            }
+        }
+        return removingTanks
     }
 }

@@ -5,8 +5,12 @@ import android.widget.FrameLayout
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.binding
 import com.example.battletanks.enums.Direction
-import com.example.battletanks.utils.checkViewCanMoveThrounghBorder
+import com.example.battletanks.enums.Material
+import com.example.battletanks.utils.checkViewCanMoveThroughBorder
 import com.example.battletanks.utils.getElementByCoordinates
+import com.example.battletanks.utils.runOnUiThread
+import kotlin.random.Random
+
 
 class Tank(
     val element: Element,
@@ -18,21 +22,34 @@ class Tank(
         elementsOnContainer: List<Element>
     ) {
         val view = container.findViewById<View>(element.viewId) ?: return
-
-        val currentCoordinate = getTankCurrentCoordinate(view)
+        val currentCoordinate = getTankNextCoordinate(view)
         this.direction = direction
         view.rotation = direction.rotation
         val nextCoordinate = getTankNextCoordinate(view)
-        if (view.checkViewCanMoveThrounghBorder(nextCoordinate)
-            && element.checkTankCanMoveThrounghMaterial(nextCoordinate, elementsOnContainer))
-        {
-            binding.container.removeView(view)
-            binding.container.addView(view, 0)
+        if (view.checkViewCanMoveThroughBorder(nextCoordinate)
+            && element.checkTankCanMoveThroughMaterial(nextCoordinate, elementsOnContainer)
+        ) {
+            emulateViewMoving(container, view)
             element.coordinate = nextCoordinate
         } else {
             element.coordinate = currentCoordinate
             (view.layoutParams as FrameLayout.LayoutParams).topMargin = currentCoordinate.top
             (view.layoutParams as FrameLayout.LayoutParams).leftMargin = currentCoordinate.left
+            changeDirectionForEnemyTank()
+        }
+    }
+
+    private fun changeDirectionForEnemyTank() {
+        if (element.material == Material.ENEMY_TANK) {
+            val randomDirection = Direction.entries[Random.nextInt()(Direction.entries.size)]
+            this.direction = randomDirection
+        }
+    }
+
+    private fun emulateViewMoving(container: FrameLayout, view: View) {
+        container.runOnUiThread {
+            binding.container.removeView(view)
+            binding.container.addView(view,0)
         }
     }
 
@@ -43,8 +60,7 @@ class Tank(
         )
     }
 
-    private fun getTankNextCoordinate(view: View): Coordinate {
-        val layoutParams = view.layoutParams as FrameLayout.LayoutParams
+    private fun getTankNextCoordinate(view: View) {
         when(direction) {
             Direction.UP -> {
                 (view.layoutParams as FrameLayout.LayoutParams).topMargin += -CELL_SIZE
@@ -62,18 +78,17 @@ class Tank(
                 (view.layoutParams as FrameLayout.LayoutParams).leftMargin += CELL_SIZE
             }
         }
-
         return Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
     }
 
-    private fun  Element.checkTankCanMoveThrounghMaterial(
+    private fun Element.checkTankCanMoveThroughMaterial(
         coordinate: Coordinate,
         elementsOnContainer: List<Element>
     ): Boolean {
         for (anyCoordinate in getTankCoordinates(coordinate)) {
             val element = getElementByCoordinates(anyCoordinate, elementsOnContainer)
-            if (element != null && !element.material.tankConGoThrough) {
-                if (this == element) {
+            if (element != null && !element.material.tankCanGoThrough) {
+                if(this == element) {
                     continue
                 }
                 return false
@@ -82,7 +97,7 @@ class Tank(
         return true
     }
 
-    private fun getTankCoordinates(topLeftCoordinate: Coordinate): List<Coordinate> {
+    private fun getTankCoordinates (topLeftCoordinate: Coordinate): List <Coordinate> {
         val coordinateList = mutableListOf<Coordinate>()
         coordinateList.add(topLeftCoordinate)
         coordinateList.add(Coordinate(topLeftCoordinate.top + CELL_SIZE, topLeftCoordinate.left))

@@ -9,20 +9,19 @@ import com.example.battletanks.binding
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
 
-fun View.checkViewCanMoveThrounghBorder(coordinate: Coordinate): Boolean {
+fun View.checkViewCanMoveThroughBorder(coordinate: Coordinate): Boolean {
     return coordinate.top >= 0 &&
-            coordinate.top + this.height <= binding.container.height &&
+            coordinate.top + this.height <= binding.container.height  &&
             coordinate.left >= 0 &&
             coordinate.left + this.width <= binding.container.width
-
 }
 
 fun getElementByCoordinates(
     coordinate: Coordinate,
-    elementsOnContainer: List<Element>
+    elementsOnContainer: List <Element>
 ): Element? {
     for (element in elementsOnContainer) {
-        for (height in 0 until element.height) {
+        for (height in 0  until  element.height) {
             for (width in 0 until element.width) {
                 val searchingCoordinate = Coordinate(
                     top = element.coordinate.top + height * CELL_SIZE,
@@ -43,9 +42,9 @@ fun Element.drawElement(container: FrameLayout) {
         this.material.width * CELL_SIZE,
         this.material.height * CELL_SIZE
     )
-    this.material.image?.let { view.setImageResource(it) }
-    layoutParams.topMargin = coordinate.top
-    layoutParams.leftMargin = coordinate.left
+    this.material.image?.let {view.setImageResource(it)}
+    layoutParams.topMargin = this.coordinate.top
+    layoutParams.leftMargin = this.coordinate.left
     view.id = this.viewId
     view.layoutParams = layoutParams
     view.scaleType = ImageView.ScaleType.FIT_XY

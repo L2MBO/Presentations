@@ -1,6 +1,5 @@
 package com.example.battletanks.enums
 
-import android.text.Editable
 import com.example.battletanks.R
 
 const val CELLS_SIMPLE_ELEMENT = 1
@@ -8,8 +7,8 @@ const val CELLS_EAGLE_WIDTH = 4
 const val CELLS_EAGLE_HEIGHT = 3
 const val CELLS_TANK_SIZE = 2
 
-enum class Material(
-    val tankConGoThrough: Boolean,
+enum class Material (
+    val tankCanGoThrough: Boolean,
     val bulletCanGoThrough: Boolean,
     val simpleBulletCanDestroy: Boolean,
     val elementsAmountOnScreen: Int,
@@ -24,15 +23,14 @@ enum class Material(
         0,
         0,
         0,
-        null
+        null,
     ),
     BRICK(
         false,
         false,
         true,
         0,
-        CELLS_SIMPLE_ELEMENT,
-        CELLS_SIMPLE_ELEMENT,
+        CELLS_SIMPLE_ELEMENT, CELLS_SIMPLE_ELEMENT,
         R.drawable.brick
     ),
     CONCRETE(
@@ -40,8 +38,7 @@ enum class Material(
         false,
         false,
         0,
-        CELLS_SIMPLE_ELEMENT,
-        CELLS_SIMPLE_ELEMENT,
+        CELLS_SIMPLE_ELEMENT, CELLS_SIMPLE_ELEMENT,
         R.drawable.concrete
     ),
     GRASS(
@@ -49,8 +46,7 @@ enum class Material(
         true,
         false,
         0,
-        CELLS_SIMPLE_ELEMENT,
-        CELLS_SIMPLE_ELEMENT,
+        CELLS_SIMPLE_ELEMENT, CELLS_SIMPLE_ELEMENT,
         R.drawable.grass
     ),
     EAGLE(
@@ -58,8 +54,7 @@ enum class Material(
         false,
         true,
         1,
-        CELLS_EAGLE_WIDTH,
-        CELLS_EAGLE_HEIGHT,
+        CELLS_EAGLE_WIDTH, CELLS_EAGLE_HEIGHT,
         R.drawable.eagle
     ),
     ENEMY_TANK(
@@ -67,8 +62,7 @@ enum class Material(
         false,
         true,
         0,
-        CELLS_TANK_SIZE,
-        CELLS_TANK_SIZE,
+        CELLS_TANK_SIZE, CELLS_TANK_SIZE,
         R.drawable.enemy_tank
     ),
     PLAYER_TANK(
@@ -80,4 +74,5 @@ enum class Material(
         CELLS_TANK_SIZE,
         R.drawable.tank
     )
+
 }

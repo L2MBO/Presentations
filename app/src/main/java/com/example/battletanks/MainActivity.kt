@@ -1,6 +1,6 @@
 package com.example.battletanks
 
-import androidx.appcompat.app.AppCompatActivity
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_DPAD_DOWN
@@ -12,22 +12,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import com.example.battletanks.enums.Direction.UP
-import com.example.battletanks.enums.Direction.DOWN
-import com.example.battletanks.enums.Direction.LEFT
-import com.example.battletanks.enums.Direction.RIGHT
+import androidx.appcompat.app.AppCompatActivity
 import com.example.battletanks.databinding.ActivityMainBinding
 import com.example.battletanks.drawers.BulletDrawer
 import com.example.battletanks.drawers.ElementsDrawer
 import com.example.battletanks.drawers.EnemyDrawer
 import com.example.battletanks.drawers.GridDrawer
 import com.example.battletanks.enums.Direction
-import com.example.battletanks.enums.Material.GRASS
-import com.example.battletanks.enums.Material.EAGLE
-import com.example.battletanks.enums.Material.CONCRETE
-import com.example.battletanks.enums.Material.EMPTY
-import com.example.battletanks.enums.Material.BRICK
-//import com.example.battletanks.enums.Material.ENEMY_TANK
+import com.example.battletanks.enums.Direction.DOWN
+import com.example.battletanks.enums.Direction.LEFT
+import com.example.battletanks.enums.Direction.RIGHT
+import com.example.battletanks.enums.Direction.UP
+import com.example.battletanks.enums.Material
 import com.example.battletanks.enums.Material.PLAYER_TANK
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
@@ -35,22 +31,22 @@ import com.example.battletanks.models.Tank
 
 const val CELL_SIZE = 50
 
+@SuppressLint("StaticFieldLeak")
 lateinit var binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private var editMode = false
 
+    private var editMode = false
     private val playerTank = Tank(
         Element(
             R.id.myTank,
             PLAYER_TANK,
-            Coordinate(0, 0),
+            Coordinate(0,0),
             PLAYER_TANK.width,
             PLAYER_TANK.height
         ), UP
     )
-
-    private val gridDrawer by lazy {
+    private val grindDrawer by lazy {
         GridDrawer(binding.container)
     }
 
@@ -67,9 +63,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val enemyDrawer by lazy {
-        EnemyDrawer(binding.container)
+        EnemyDrawer(binding.container, elementsDrawer.elementsOnContainer)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -77,13 +74,11 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Menu"
 
-        binding.editorClear.setOnClickListener { elementsDrawer.currentMaterial = EMPTY }
-        binding.editorBrick.setOnClickListener { elementsDrawer.currentMaterial = BRICK }
-        binding.editorConcrete.setOnClickListener {
-            elementsDrawer.currentMaterial = CONCRETE
-        }
-        binding.editorGrass.setOnClickListener { elementsDrawer.currentMaterial = GRASS }
-        binding.editorEagle.setOnClickListener { elementsDrawer.currentMaterial = EAGLE }
+        binding.editorClear.setOnClickListener {elementsDrawer.currentMaterial = Material.EMPTY}
+        binding.editorBrick.setOnClickListener {elementsDrawer.currentMaterial = Material.BRICK}
+        binding.editorConcrete.setOnClickListener {elementsDrawer.currentMaterial = Material.CONCRETE}
+        binding.editorGrass.setOnClickListener {elementsDrawer.currentMaterial = Material.GRASS}
+        binding.editorEagle.setOnClickListener {elementsDrawer.currentMaterial = Material.EAGLE}
         binding.container.setOnTouchListener { _, event ->
             elementsDrawer.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
@@ -103,12 +98,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showSettings() {
-        gridDrawer.drawGrid()
+        grindDrawer.drawGrid()
         binding.materialsContainer.visibility = VISIBLE
     }
 
     private fun hideSettings() {
-        gridDrawer.removeGrid()
+        grindDrawer.removeGrid()
         binding.materialsContainer.visibility = INVISIBLE
     }
 
@@ -133,7 +128,6 @@ class MainActivity : AppCompatActivity() {
                 startTheGame()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -142,7 +136,8 @@ class MainActivity : AppCompatActivity() {
         if (editMode) {
             return
         }
-        enemyDrawer.startEnemyDrawing(elementsDrawer.elementsOnContainer)
+        enemyDrawer.startEnemyCreation()
+        enemyDrawer.moveEnemyTanks()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -151,17 +146,16 @@ class MainActivity : AppCompatActivity() {
             KEYCODE_DPAD_DOWN -> move(DOWN)
             KEYCODE_DPAD_LEFT -> move(LEFT)
             KEYCODE_DPAD_RIGHT -> move(RIGHT)
-
             KEYCODE_SPACE -> bulletDrawer.makeBulletMove(
                 binding.myTank,
                 playerTank.direction,
-                elementsDrawer.elementsOnContainer
-            )
+                elementsDrawer.elementsOnContainer)
         }
-        return super.onKeyShortcut(keyCode, event)
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun move(direction: Direction) {
         playerTank.move(direction, binding.container, elementsDrawer.elementsOnContainer)
     }
 }
+
