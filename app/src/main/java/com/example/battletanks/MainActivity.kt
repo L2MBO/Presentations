@@ -10,7 +10,7 @@ import android.view.KeyEvent.KEYCODE_DPAD_UP
 import android.view.KeyEvent.KEYCODE_SPACE
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import com.example.battletanks.enums.Direction.UP
 import com.example.battletanks.enums.Direction.DOWN
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         LevelStorage(this)
     }
 
-    private val eenmyDrawer by lazy {
+    private val enemyDrawer by lazy {
         EnemyDrawer(binding.container)
     }
 
@@ -88,13 +88,11 @@ class MainActivity : AppCompatActivity() {
     private fun showSettings() {
         gridDrawer.drawGrid()
         binding.materialsContainer.visibility = VISIBLE
-        //elementsDrawer.changeElementsVisibility(true)
     }
 
     private fun hideSettings() {
         gridDrawer.removeGrid()
-        binding.materialsContainer.visibility = GONE
-        //elementsDrawer.changeElementsVisibility(false)
+        binding.materialsContainer.visibility = INVISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -114,8 +112,20 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
 
+            R.id.menu_play -> {
+                startTheGame()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun startTheGame() {
+        if (editMode) {
+            return
+        }
+        enemyDrawer.startEnemyDrawing(elementsDrawer.elementsOnContainer)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
