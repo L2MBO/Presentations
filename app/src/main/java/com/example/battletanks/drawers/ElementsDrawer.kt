@@ -1,9 +1,7 @@
 package com.example.battletanks.drawers
 
-import android.app.Activity
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.enums.Material
 import com.example.battletanks.models.Coordinate
@@ -11,7 +9,7 @@ import com.example.battletanks.models.Element
 import com.example.battletanks.utils.drawElement
 import com.example.battletanks.utils.getElementByCoordinates
 
-class ElementsDrawer(val container: FrameLayout) {
+class ElementsDrawer (private val container: FrameLayout){
     var currentMaterial = Material.EMPTY
     val elementsOnContainer = mutableListOf<Element>()
 
@@ -29,7 +27,7 @@ class ElementsDrawer(val container: FrameLayout) {
     private fun drawOrReplaceView(coordinate: Coordinate) {
         val viewOnCoordinate = getElementByCoordinates(coordinate, elementsOnContainer)
         if (viewOnCoordinate == null) {
-            drawView(coordinate)
+            createElementDrawView(coordinate)
             return
         }
         if (viewOnCoordinate.material != currentMaterial) {
@@ -38,22 +36,23 @@ class ElementsDrawer(val container: FrameLayout) {
     }
 
     fun drawElementsList(elements: List<Element>?) {
-        if (elements == null)
+        if (elements == null) {
             return
+        }
         for (element in elements) {
             currentMaterial = element.material
-            drawView(element.coordinate)
+            drawElement(element)
         }
     }
 
-    private  fun replaceView(coordinate: Coordinate) {
+    private fun replaceView(coordinate: Coordinate) {
         eraseView(coordinate)
-        drawView(coordinate)
+        createElementDrawView(coordinate)
     }
 
     private fun eraseView(coordinate: Coordinate) {
         removeElement(getElementByCoordinates(coordinate, elementsOnContainer))
-        for (element in getElemntsUnderCurrentCoordinate(coordinate)) {
+        for (element in getElementsUnderCurrentCoordinate(coordinate)) {
             removeElement(element)
         }
     }
@@ -66,10 +65,10 @@ class ElementsDrawer(val container: FrameLayout) {
         }
     }
 
-    private fun getElemntsUnderCurrentCoordinate(coordinate: Coordinate): List<Element> {
+    private fun getElementsUnderCurrentCoordinate(coordinate: Coordinate): List<Element> {
         val elements = mutableListOf<Element>()
         for (element in elementsOnContainer) {
-            for (height in 0 until currentMaterial.height) {
+            for (height in 0 until  currentMaterial.height) {
                 for (width in 0 until currentMaterial.width) {
                     if (element.coordinate == Coordinate(
                             coordinate.top + height * CELL_SIZE,
@@ -84,24 +83,26 @@ class ElementsDrawer(val container: FrameLayout) {
         return elements
     }
 
-    private fun removeUnwantedInstances() {
+    private fun removeUnwantedInstance() {
         if (currentMaterial.elementsAmountOnScreen != 0) {
-            val erasingElements = elementsOnContainer.filter { it.material == currentMaterial }
+            val erasingElements = elementsOnContainer.filter {it.material == currentMaterial}
             if (erasingElements.size >= currentMaterial.elementsAmountOnScreen) {
                 eraseView(erasingElements[0].coordinate)
             }
         }
     }
 
-    private fun drawView(coordinate: Coordinate) {
-        removeUnwantedInstances()
+    private fun drawElement(element: Element) {
+        removeUnwantedInstance()
+        element.drawElement(container)
+        elementsOnContainer.add(element)
+    }
+
+    private fun createElementDrawView(coordinate: Coordinate) {
         val element = Element(
             material = currentMaterial,
             coordinate = coordinate,
-            width = currentMaterial.width,
-            height = currentMaterial.height
         )
-        element.drawElement(container)
-        elementsOnContainer.add(element)
+        drawElement(element)
     }
 }
